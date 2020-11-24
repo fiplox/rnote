@@ -1,3 +1,6 @@
+# DISCLAIMER
+#### IT IS NOT A FINAL PROJECT IDEA. PREJECT CAN BE CHANGED COMPLETELY. SOOOOORRRYYYY
+
 # rnote
 [![license](https://img.shields.io/badge/licence-GPLv3-blue)](https://framagit.org/fiplox/rpass/-/blob/main/LICENSE)
 
