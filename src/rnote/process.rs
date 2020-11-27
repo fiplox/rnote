@@ -1,7 +1,7 @@
 use crate::rnote::notes;
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
-use dialoguer::{theme::ColorfulTheme, Input};
+use dialoguer::{theme::ColorfulTheme, Confirm, Input};
 
 pub fn new(matches: &ArgMatches) -> Result<()> {
     let header = match matches.value_of("header") {
@@ -41,7 +41,19 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
 }
 pub fn search(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
-        Some(s) => unimplemented!("{}", s),
+        Some(s) => {
+            let p = notes::find_path(s)?;
+            if Confirm::with_theme(&ColorfulTheme::default())
+                .with_prompt("Do you want to open it?")
+                .default(true)
+                .interact()?
+            {
+                let editor = std::env::var("EDITOR")?;
+                std::process::Command::new(editor).arg(&p).status()?;
+            } else {
+                println!("{}", p);
+            }
+        }
         None => match matches.is_present("word") {
             true => {
                 let s: String = Input::with_theme(&ColorfulTheme::default())
