@@ -13,10 +13,13 @@ pub fn make_app() -> App<'static, 'static> {
                 .arg(
                     Arg::with_name("category")
                         .help("Create note in category.")
-                        .short("c")
-                        .long("category"),
+                        .index(2),
                 )
-                .arg(Arg::with_name("header").help("Give name to the file.")),
+                .arg(
+                    Arg::with_name("header")
+                        .index(1)
+                        .help("Give name to the file."),
+                ),
         )
         .subcommand(
             SubCommand::with_name("remove")
