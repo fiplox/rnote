@@ -61,7 +61,7 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
 }
 
 /// Finds a path to desired note.
-fn find_path(header: &str) -> Result<String> {
+pub fn find_path(header: &str) -> Result<String> {
     let mut paths: Vec<String> = Vec::new();
     let base = get_base_path()?;
     let header = format!("{}.md", header);
@@ -113,7 +113,7 @@ pub fn remove(header: &str) -> Result<()> {
 
 /// Modify a note.
 pub fn modify(header: &str) -> Result<()> {
-    let editor = env::var("EDITOR").unwrap_or("/bin/vi".to_owned());
+    let editor = env::var("EDITOR")?;
     let file = find_path(header)?;
     Command::new(editor).arg(&file).status()?;
     println!("Edited successfully!");
