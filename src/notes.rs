@@ -1,6 +1,7 @@
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use chrono::Utc;
 use std::{env, fs, process::Command};
+use walkdir::WalkDir;
 
 fn get_base_path() -> Result<String> {
     let home = env::var("HOME")?;
@@ -29,7 +30,25 @@ pub fn create_dir(category: &str) -> Result<()> {
 pub fn create_note(header: &str, category: &str) -> Result<()> {
     let editor = env::var("EDITOR").unwrap_or("/bin/vi".to_owned());
     let file = format!("{}{}.md", get_path(category)?, header);
-    // TODO: check if duplicate
+    is_duplicate(header, category)?;
     Command::new(editor).arg(&file).status()?;
+    Ok(())
+}
+
+fn is_duplicate(header: &str, category: &str) -> Result<()> {
+    let file = format!("{}{}", get_path(category)?, header);
+    let path = format!("{}", get_path(category)?);
+    for entry in WalkDir::new(path) {
+        let entry = entry?;
+        let p: &str = match entry.path().to_str() {
+            Some(s) => s,
+            None => "",
+        };
+        if p == file {
+            return Err(anyhow!(
+                "Duplicate in the same category/date. Choose another name."
+            ));
+        }
+    }
     Ok(())
 }
