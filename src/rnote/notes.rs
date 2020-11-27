@@ -2,7 +2,6 @@ use anyhow::{anyhow, Result};
 use chrono::Utc;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use std::{env, fs, process::Command};
-use text_io::read;
 use walkdir::WalkDir;
 
 /// Get the path to the root directory of all notes.
