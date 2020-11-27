@@ -8,24 +8,26 @@ A minimal note taking cli tool.
 
 ## Description
 
-**rnote** creates files in a date-named directories with a name of a header of the note. 
+**rnote** creates `Markdown` text files in a date-named or category directories with a name of a header of the note. 
 
-Example :
+Example:
 
 ```
 .rnote/
 ├── 2020-03-20
-│   └── Lockdown
-└── 2020-10-20
-    └── New Lockdown
+│   └── Lockdown.md
+├── 2020-10-20
+│   └── New Lockdown.md
+└── shop
+    └── to buy.md
 ```
 
 ## TODO
 
 - [ ] Create a note
 - [ ] Delete a note
-- [ ] Show all notes
-- [ ] Show all notes from `DATE`
+- [ ] Modify a note
+- [ ] Show all notes in a scrollable TextView in a raw terminal with [termimad](https://crates.io/crates/termimad)
+- [ ] Show all notes from `DATE` or `Category`
 - [ ] Search a note by header
-- [ ] Search a note by word
-- [ ] Export a note to `.md` format 
+- [ ] Search a note by word (kinda grep)
