@@ -34,7 +34,7 @@ pub fn create_dir(category: &str) -> Result<()> {
 
 /// Create a new note.
 pub fn create(header: &str, category: &str) -> Result<()> {
-    let editor = env::var("EDITOR").unwrap_or("/bin/vi".to_owned());
+    let editor = env::var("EDITOR")?;
     let file = format!("{}{}.md", get_path(category)?, header);
     create_dir(category)?;
     is_duplicate(header, category)?;
