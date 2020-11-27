@@ -1,5 +1,6 @@
 use anyhow::{anyhow, Result};
 use chrono::Utc;
+use dialoguer::{theme::ColorfulTheme, Confirm, Select};
 use std::{env, fs, process::Command};
 use text_io::read;
 use walkdir::WalkDir;
@@ -67,38 +68,30 @@ fn find_path(header: &str) -> Result<String> {
     let header = format!("{}.md", header);
     for entry in WalkDir::new(base) {
         let entry = entry?;
-        let p: &str = match entry.path().to_str() {
-            Some(s) => s,
-            None => "",
+        let p: String = match entry.path().to_str() {
+            Some(s) => s.to_owned(),
+            None => "".to_owned(),
         };
         let name: &str = match entry.file_name().to_str() {
             Some(s) => s,
             None => "",
         };
         if name == header {
-            paths.push(String::from(p));
+            paths.push(p);
         }
     }
     if paths.is_empty() {
         Err(anyhow!("Note not found."))
     } else {
         if paths.len() == 1 {
-            Ok(format!("{}.md", paths[0]))
+            Ok(paths.remove(0))
         } else {
-            let mut n: usize;
-            loop {
-                let mut i = 1;
-                println!("Choose one: \n");
-                for path in &paths {
-                    println!("{}\t {}", i, path);
-                    i += 1;
-                }
-                n = read!();
-                if n >= 1 && n <= paths.len() {
-                    break;
-                }
-            }
-            Ok(format!("{}.md", paths[n]))
+            let selection = Select::with_theme(&ColorfulTheme::default())
+                .with_prompt("Choose a note")
+                .default(0)
+                .items(&paths)
+                .interact()?;
+            Ok(paths.remove(selection))
         }
     }
 }
@@ -106,9 +99,10 @@ fn find_path(header: &str) -> Result<String> {
 /// Deletes a note.
 pub fn remove(header: &str) -> Result<()> {
     let path = find_path(header)?;
-    println!("Are you sure you want to delete {} [Y/n]", header);
-    let response: String = read!();
-    if response == "y" || response == "Y" || response == "yes" || response == "Yes" {
+    if Confirm::with_theme(&ColorfulTheme::default())
+        .with_prompt(format!("Do you want to delete {}?", header))
+        .interact()?
+    {
         println!("Deleting...");
         fs::remove_file(path)?;
         println!("Successfully deleted.");
@@ -123,5 +117,6 @@ pub fn modify(header: &str) -> Result<()> {
     let editor = env::var("EDITOR").unwrap_or("/bin/vi".to_owned());
     let file = find_path(header)?;
     Command::new(editor).arg(&file).status()?;
+    println!("Edited successfully!");
     Ok(())
 }

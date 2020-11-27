@@ -2,7 +2,7 @@ pub use clap::{App, AppSettings, Arg, SubCommand};
 
 pub fn make_app() -> App<'static, 'static> {
     App::new("rnote")
-        .version("0.0.0")
+        .version("0.0.1")
         .author("Volodymyr Patuta <vpatuta AT protonmail DOT com>")
         .about("Minimal note talking cli tool.")
         .setting(AppSettings::ArgRequiredElseHelp)
