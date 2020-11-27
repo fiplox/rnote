@@ -27,4 +27,4 @@ Example:
 - [ ] Show all notes in a scrollable TextView in a raw terminal with [termimad](https://crates.io/crates/termimad)
 - [ ] Show all notes from `DATE` or `Category`
 - [x] Search a note by header
-- [ ] Search a note by word (kinda grep)
+- [x] Search a note by word (kinda grep)
