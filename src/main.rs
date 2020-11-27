@@ -1,10 +1,24 @@
 use anyhow::Result;
+use dialoguer::{theme::ColorfulTheme, Input};
 use rnote::{app, process};
 
 mod rnote;
 
+fn check() -> Result<()> {
+    let editor = std::env::var("EDITOR").unwrap_or("".to_owned());
+    if editor.is_empty() {
+        let editor: String = Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Your text editor")
+            .interact_text()?;
+        std::env::set_var("EDITOR", editor);
+    }
+
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let mut app = app::make_app();
+    check()?;
 
     match rnote::app::make_app().get_matches().subcommand() {
         ("new", Some(m)) => process::new(m)?,
