@@ -1,6 +1,7 @@
 use anyhow::{anyhow, Result};
 use chrono::Utc;
 use std::{env, fs, process::Command};
+use text_io::read;
 use walkdir::WalkDir;
 
 fn get_base_path() -> Result<String> {
@@ -51,4 +52,59 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
         }
     }
     Ok(())
+}
+
+fn find_path(header: &str) -> Result<String> {
+    let mut paths: Vec<String> = Vec::new();
+    let base = get_base_path()?;
+    for entry in WalkDir::new(base) {
+        let entry = entry?;
+        let p: &str = match entry.path().to_str() {
+            Some(s) => s,
+            None => "",
+        };
+        let name: &str = match entry.file_name().to_str() {
+            Some(s) => s,
+            None => "",
+        };
+        if name == header {
+            paths.push(String::from(p));
+        }
+    }
+    if paths.is_empty() {
+        Err(anyhow!("Note not found."))
+    } else {
+        if paths.len() == 1 {
+            Ok(paths.remove(0))
+        } else {
+            let mut n: usize;
+            loop {
+                let mut i = 1;
+                println!("Choose one: \n");
+                for path in &paths {
+                    println!("{}\t {}", i, path);
+                    i += 1;
+                }
+                n = read!();
+                if n >= 1 && n <= paths.len() {
+                    break;
+                }
+            }
+            Ok(paths.remove(n))
+        }
+    }
+}
+
+pub fn delete_note(header: &str) -> Result<()> {
+    let path = find_path(header)?;
+    println!("Are you sure you want to delete {} [Y/n]", header);
+    let response: String = read!();
+    if response == "y" || response == "Y" || response == "yes" || response == "Yes" {
+        println!("Deleting...");
+        fs::remove_file(path)?;
+        println!("Successfully deleted.");
+        Ok(())
+    } else {
+        Err(anyhow!("Abort."))
+    }
 }
