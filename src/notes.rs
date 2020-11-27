@@ -28,8 +28,8 @@ pub fn create_dir(category: &str) -> Result<()> {
 
 pub fn create_note(header: &str, category: &str) -> Result<()> {
     let editor = env::var("EDITOR").unwrap_or("/bin/vi".to_owned());
-    let path = format!("{}{}", get_path(category)?, header);
+    let file = format!("{}{}.md", get_path(category)?, header);
     // TODO: check if duplicate
-    Command::new(editor).arg(&path).status()?;
+    Command::new(editor).arg(&file).status()?;
     Ok(())
 }
