@@ -51,12 +51,12 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("search")
                 .alias("s")
                 .about("Search a note.")
-                .arg(Arg::with_name("header").help("Name of the note."))
                 .arg(
                     Arg::with_name("word")
                         .help("Search by word.")
                         .short("w")
                         .long("word"),
-                ),
+                )
+                .arg(Arg::with_name("header").help("Name of the note.")),
         )
 }

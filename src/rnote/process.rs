@@ -1,5 +1,5 @@
 use crate::rnote::notes;
-use anyhow::Result;
+use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use dialoguer::{theme::ColorfulTheme, Input};
 use text_io::read;
@@ -42,5 +42,17 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
     unimplemented!("list all notes, one note or category {:?}", matches);
 }
 pub fn search(matches: &ArgMatches) -> Result<()> {
-    unimplemented!("Search a note by header or by word. {:?}", matches);
+    match matches.value_of("header") {
+        Some(s) => unimplemented!("{}", s),
+        None => match matches.is_present("word") {
+            true => {
+                let s: String = Input::with_theme(&ColorfulTheme::default())
+                    .with_prompt("String to search")
+                    .interact_text()?;
+                notes::search_by_word(&s)?;
+            }
+            false => return Err(anyhow!("Nothing entered for search.")),
+        },
+    }
+    Ok(())
 }

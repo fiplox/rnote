@@ -120,3 +120,29 @@ pub fn modify(header: &str) -> Result<()> {
     println!("Edited successfully!");
     Ok(())
 }
+
+pub fn search_by_word(word: &str) -> Result<()> {
+    extern crate fstream;
+    let path = get_base_path()?;
+    for (_, file) in WalkDir::new(path)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            match fstream::contains(file.path(), word) {
+                Some(b) => {
+                    if b {
+                        let path = file.path().to_str().unwrap_or("");
+                        if !path.is_empty() {
+                            println!("{}", path);
+                        }
+                    }
+                }
+                None => continue,
+            }
+        }
+    }
+
+    Ok(())
+}
