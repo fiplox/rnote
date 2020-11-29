@@ -120,6 +120,13 @@ pub fn modify(header: &str) -> Result<()> {
     Ok(())
 }
 
+fn print_path(path: String) {
+    let off = path.find(".rnote/").unwrap_or(path.len()) + 7;
+    let mut path = path;
+    path.drain(..off);
+    println!("{}", path);
+}
+
 pub fn search_by_word(word: &str) -> Result<()> {
     extern crate fstream;
     let path = get_base_path()?;
@@ -134,7 +141,7 @@ pub fn search_by_word(word: &str) -> Result<()> {
                     if b {
                         let path = file.path().to_str().unwrap_or("");
                         if !path.is_empty() {
-                            println!("{}", path);
+                            print_path(path.to_owned());
                         }
                     }
                 }
