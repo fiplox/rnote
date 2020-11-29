@@ -190,3 +190,37 @@ pub fn show_all() -> Result<()> {
     show::run_app(skin, md)?;
     Ok(())
 }
+
+pub fn show(header: &str) -> Result<()> {
+    let path = find_path(header)?;
+    match path {
+        Some(s) => {
+            let skin = show::make_skin();
+            let content = fs::read_to_string(s)?;
+            show::run_app(skin, &content)?;
+            Ok(())
+        }
+        None => Err(anyhow!("Abort.")),
+    }
+}
+
+pub fn show_category(category: &str) -> Result<()> {
+    let base = get_base_path()?;
+    let path = format!("{}{}", base, category);
+    let mut files: Vec<String> = Vec::new();
+    if std::path::Path::new(&path).exists() {
+        for (_, file) in WalkDir::new(path)
+            .into_iter()
+            .filter_map(|file| file.ok())
+            .enumerate()
+        {
+            if file.metadata()?.is_file() {
+                files.push(fs::read_to_string(file.path())?);
+            }
+        }
+        let skin = show::make_skin();
+        let md = &files.join("---\n");
+        show::run_app(skin, md)?;
+    }
+    Ok(())
+}

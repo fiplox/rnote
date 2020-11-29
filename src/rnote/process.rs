@@ -70,10 +70,18 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
 
 pub fn show(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
-        Some(s) => unimplemented!("{}", s),
+        Some(s) => notes::show(s)?,
         None => match matches.is_present("all") {
             true => notes::show_all()?,
-            false => return Err(anyhow!("No option is given. Abort.")),
+            false => match matches.is_present("category") {
+                true => {
+                    let category: String = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("Name of category:")
+                        .interact_text()?;
+                    notes::show_category(&category)?;
+                }
+                false => return Err(anyhow!("No option is given. Abort.")),
+            },
         },
     }
     Ok(())
