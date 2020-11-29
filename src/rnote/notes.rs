@@ -64,7 +64,7 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
 }
 
 /// Finds a path to desired note.
-pub fn find_path(header: &str) -> Result<String> {
+pub fn find_path(header: &str) -> Result<Option<String>> {
     let mut paths: Vec<String> = Vec::new();
     let base = get_base_path()?;
     let header = format!("{}.md", header);
@@ -86,14 +86,17 @@ pub fn find_path(header: &str) -> Result<String> {
         Err(anyhow!("Note not found."))
     } else {
         if paths.len() == 1 {
-            Ok(paths.remove(0))
+            Ok(Some(paths.remove(0)))
         } else {
             let selection = Select::with_theme(&ColorfulTheme::default())
-                .with_prompt("Choose a note")
+                .with_prompt("Optionally choose a note")
                 .default(0)
                 .items(&paths)
-                .interact()?;
-            Ok(paths.remove(selection))
+                .interact_opt()?;
+            match selection {
+                Some(s) => Ok(Some(paths.remove(s))),
+                None => Ok(None),
+            }
         }
     }
 }
@@ -104,9 +107,10 @@ pub fn remove(header: &str) -> Result<()> {
     if Confirm::with_theme(&ColorfulTheme::default())
         .with_prompt(format!("Do you want to delete {}?", header))
         .interact()?
+        && path.is_some()
     {
         println!("Deleting...");
-        fs::remove_file(path)?;
+        fs::remove_file(path.unwrap())?;
         println!("Successfully deleted.");
         Ok(())
     } else {
@@ -118,21 +122,23 @@ pub fn remove(header: &str) -> Result<()> {
 pub fn modify(header: &str) -> Result<()> {
     let editor = env::var("EDITOR")?;
     let file = find_path(header)?;
-    Command::new(editor).arg(&file).status()?;
-    println!("Edited successfully!");
-    Ok(())
-}
-
-fn print_path(path: String) {
-    let off = path.find(".rnote/").unwrap_or(path.len()) + 7;
-    let mut path = path;
-    path.drain(..off);
-    println!("{}", path);
+    match file {
+        Some(f) => {
+            Command::new(editor).arg(f).status()?;
+            println!("Edited successfully!");
+            Ok(())
+        }
+        None => {
+            println!("Abort.");
+            Ok(())
+        }
+    }
 }
 
 pub fn search_by_word(word: &str) -> Result<()> {
     extern crate fstream;
     let path = get_base_path()?;
+    let mut paths: Vec<String> = Vec::new();
     for (_, file) in WalkDir::new(path)
         .into_iter()
         .filter_map(|file| file.ok())
@@ -144,13 +150,24 @@ pub fn search_by_word(word: &str) -> Result<()> {
                     if b {
                         let path = file.path().to_str().unwrap_or("");
                         if !path.is_empty() {
-                            print_path(path.to_owned());
+                            paths.push(path.to_owned());
                         }
                     }
                 }
                 None => continue,
             }
         }
+    }
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Optionally choose a note")
+        .default(0)
+        .items(&paths)
+        .interact_opt()?;
+    if let Some(selection) = selection {
+        let editor = std::env::var("EDITOR")?;
+        std::process::Command::new(editor)
+            .arg(paths.remove(selection))
+            .status()?;
     }
 
     Ok(())
