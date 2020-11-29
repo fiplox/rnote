@@ -15,6 +15,7 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
     notes::create(&header, category)?;
     Ok(())
 }
+
 pub fn remove(matches: &ArgMatches) -> Result<()> {
     let header = match matches.value_of("header") {
         Some(s) => s.to_owned(),
@@ -25,6 +26,7 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
     notes::remove(&header)?;
     Ok(())
 }
+
 pub fn edit(matches: &ArgMatches) -> Result<()> {
     let header = match matches.value_of("header") {
         Some(s) => s.to_owned(),
@@ -36,9 +38,11 @@ pub fn edit(matches: &ArgMatches) -> Result<()> {
     notes::modify(&header)?;
     Ok(())
 }
+
 pub fn list(matches: &ArgMatches) -> Result<()> {
     unimplemented!("list all notes, one note or category {:?}", matches);
 }
+
 pub fn search(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
         Some(s) => {
@@ -62,6 +66,17 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
                 notes::search_by_word(&s)?;
             }
             false => return Err(anyhow!("Nothing entered for search.")),
+        },
+    }
+    Ok(())
+}
+
+pub fn show(matches: &ArgMatches) -> Result<()> {
+    match matches.value_of("header") {
+        Some(s) => unimplemented!("{}", s),
+        None => match matches.is_present("all") {
+            true => notes::show_all()?,
+            false => return Err(anyhow!("No option is given. Abort.")),
         },
     }
     Ok(())

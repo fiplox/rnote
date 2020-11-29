@@ -1,7 +1,8 @@
+use crate::rnote::show;
 use anyhow::{anyhow, Result};
 use chrono::Utc;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
-use std::{env, fs, process::Command};
+use std::{env, fs, io::Write, process::Command};
 use walkdir::WalkDir;
 
 /// Get the path to the root directory of all notes.
@@ -37,6 +38,8 @@ pub fn create(header: &str, category: &str) -> Result<()> {
     let file = format!("{}{}.md", get_path(category)?, header);
     create_dir(category)?;
     is_duplicate(header, category)?;
+    let mut f = fs::File::create(&file)?;
+    f.write(format!("# {}\n", header).as_bytes())?;
     Command::new(editor).arg(&file).status()?;
     Ok(())
 }
@@ -150,5 +153,23 @@ pub fn search_by_word(word: &str) -> Result<()> {
         }
     }
 
+    Ok(())
+}
+
+pub fn show_all() -> Result<()> {
+    let path = get_base_path()?;
+    let mut files: Vec<String> = Vec::new();
+    for (_, file) in WalkDir::new(path)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            files.push(fs::read_to_string(file.path())?);
+        }
+    }
+    let skin = show::make_skin();
+    let md = &files.join("---\n");
+    show::run_app(skin, md)?;
     Ok(())
 }

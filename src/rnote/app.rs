@@ -37,8 +37,7 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("list")
                 .alias("l")
                 .alias("ls")
-                .alias("show")
-                .about("Show all notes or one note")
+                .about("List all notes or one note")
                 .arg(Arg::with_name("header").help("Name of the note."))
                 .arg(
                     Arg::with_name("category")
@@ -56,6 +55,16 @@ pub fn make_app() -> App<'static, 'static> {
                         .help("Search by word.")
                         .short("w")
                         .long("word"),
+                )
+                .arg(Arg::with_name("header").help("Name of the note.")),
+        )
+        .subcommand(
+            SubCommand::with_name("show")
+                .arg(
+                    Arg::with_name("all")
+                        .help("Show all notes.")
+                        .short("a")
+                        .long("all"),
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
         )

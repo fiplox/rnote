@@ -25,6 +25,7 @@ fn main() -> Result<()> {
         ("remove", Some(m)) => process::remove(m)?,
         ("edit", Some(m)) => process::edit(m)?,
         ("list", Some(m)) => process::list(m)?,
+        ("show", Some(m)) => process::show(m)?,
         ("search", Some(m)) => process::search(m)?,
         _ => app.print_long_help()?,
     };
