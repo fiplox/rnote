@@ -28,5 +28,5 @@ Example:
 - [x] Show all notes from `DATE` or `Category`
 - [x] Search a note by header
 - [x] Search a note by word (kinda grep)
-- [ ] List all notes
-- [ ] List all notes from a `Category`
+- [x] List all notes
+- [x] List all notes from a `Category`
