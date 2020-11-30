@@ -37,8 +37,7 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("list")
                 .alias("l")
                 .alias("ls")
-                .about("List all notes or one note")
-                .arg(Arg::with_name("header").help("Name of the note."))
+                .about("List all notes or notes from a category")
                 .arg(
                     Arg::with_name("category")
                         .help("List all notes from a category.")

@@ -224,3 +224,64 @@ pub fn show_category(category: &str) -> Result<()> {
     }
     Ok(())
 }
+
+pub fn list_all() -> Result<()> {
+    let path = get_base_path()?;
+    let mut files: Vec<String> = Vec::new();
+    for (_, file) in WalkDir::new(path)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            let p = file.path().to_str().unwrap_or("");
+            if !p.is_empty() {
+                files.push(p.to_owned());
+            }
+        }
+    }
+    let selection = Select::with_theme(&ColorfulTheme::default())
+        .with_prompt("Optionally choose a note")
+        .default(0)
+        .items(&files)
+        .interact_opt()?;
+    if let Some(selection) = selection {
+        let editor = std::env::var("EDITOR")?;
+        std::process::Command::new(editor)
+            .arg(files.remove(selection))
+            .status()?;
+    }
+    Ok(())
+}
+
+pub fn list_category(category: &str) -> Result<()> {
+    let base = get_base_path()?;
+    let path = format!("{}{}", base, category);
+    let mut files: Vec<String> = Vec::new();
+    if std::path::Path::new(&path).exists() {
+        for (_, file) in WalkDir::new(path)
+            .into_iter()
+            .filter_map(|file| file.ok())
+            .enumerate()
+        {
+            if file.metadata()?.is_file() {
+                let p = file.path().to_str().unwrap_or("");
+                if !p.is_empty() {
+                    files.push(p.to_owned());
+                }
+            }
+        }
+        let selection = Select::with_theme(&ColorfulTheme::default())
+            .with_prompt("Optionally choose a note")
+            .default(0)
+            .items(&files)
+            .interact_opt()?;
+        if let Some(selection) = selection {
+            let editor = std::env::var("EDITOR")?;
+            std::process::Command::new(editor)
+                .arg(files.remove(selection))
+                .status()?;
+        }
+    }
+    Ok(())
+}

@@ -40,7 +40,16 @@ pub fn edit(matches: &ArgMatches) -> Result<()> {
 }
 
 pub fn list(matches: &ArgMatches) -> Result<()> {
-    unimplemented!("list all notes, one note or category {:?}", matches);
+    match matches.is_present("category") {
+        true => {
+            let s: String = Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("Category:")
+                .interact_text()?;
+            notes::list_category(&s)?;
+        }
+        false => notes::list_all()?,
+    }
+    Ok(())
 }
 
 pub fn search(matches: &ArgMatches) -> Result<()> {
