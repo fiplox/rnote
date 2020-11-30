@@ -73,4 +73,5 @@ pub fn make_app() -> App<'static, 'static> {
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
         )
+        .subcommand(SubCommand::with_name("panic").help("Delete all notes."))
 }

@@ -27,6 +27,7 @@ fn main() -> Result<()> {
         ("list", Some(m)) => process::list(m)?,
         ("show", Some(m)) => process::show(m)?,
         ("search", Some(m)) => process::search(m)?,
+        ("panic", _) => process::panic()?,
         _ => app.print_long_help()?,
     };
 

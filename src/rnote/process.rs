@@ -95,3 +95,9 @@ pub fn show(matches: &ArgMatches) -> Result<()> {
     }
     Ok(())
 }
+
+pub fn panic() -> Result<()> {
+    let base = notes::get_base_path()?;
+    std::fs::remove_dir_all(base)?;
+    Ok(())
+}
