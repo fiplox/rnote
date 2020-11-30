@@ -30,3 +30,4 @@ Example:
 - [x] Search a note by word (kinda grep)
 - [x] List all notes
 - [x] List all notes from a `Category`
+- [x] Delete all notes (`panic`)
