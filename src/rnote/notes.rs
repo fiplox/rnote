@@ -2,7 +2,7 @@ use crate::rnote::show;
 use anyhow::{anyhow, Result};
 use chrono::Utc;
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
-use std::{env, fs, io::Write, process::Command};
+use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, process::Command};
 use walkdir::WalkDir;
 
 /// Get the path to the root directory of all notes.
@@ -39,6 +39,7 @@ pub fn create(header: &str, category: &str) -> Result<()> {
     create_dir(category)?;
     is_duplicate(header, category)?;
     let mut f = fs::File::create(&file)?;
+    f.set_permissions(fs::Permissions::from_mode(0o600))?;
     f.write(format!("# {}\n", header).as_bytes())?;
     Command::new(editor).arg(&file).status()?;
     Ok(())
