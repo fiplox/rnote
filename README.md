@@ -25,6 +25,8 @@ Example:
 - [x] Delete a note
 - [x] Modify a note
 - [x] Show all notes in a scrollable TextView in a raw terminal with [termimad](https://crates.io/crates/termimad)
-- [ ] Show all notes from `DATE` or `Category`
+- [x] Show all notes from `DATE` or `Category`
 - [x] Search a note by header
 - [x] Search a note by word (kinda grep)
+- [ ] List all notes
+- [ ] List all notes from a `Category`

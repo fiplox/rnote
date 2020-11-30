@@ -70,9 +70,7 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("category")
                         .help("Show all notes from a category/date")
                         .short("c")
-                        .short("d")
-                        .long("category")
-                        .long("date"),
+                        .long("category"),
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
         )
