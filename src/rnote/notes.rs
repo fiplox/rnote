@@ -6,7 +6,7 @@ use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, process::Command};
 use walkdir::WalkDir;
 
 /// Get the path to the root directory of all notes.
-fn get_base_path() -> Result<String> {
+pub fn get_base_path() -> Result<String> {
     let home = env::var("HOME")?;
     Ok(format!("{}/.rnote/", home))
 }
