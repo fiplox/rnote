@@ -5,7 +5,7 @@ A minimal note taking cli tool.
 
 ## Description
 
-**rnote** creates `Markdown` text files (with persission set to 600) in a date-named or category-named directories with a name of a header of the note. 
+**rnote** creates `Markdown` text files (with permissions set to 600) in a date-named or category-named directories (with permissions set to 700) with a name of a header of the note. 
 
 Example:
 

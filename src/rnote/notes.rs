@@ -23,12 +23,25 @@ fn get_path(category: &str) -> Result<String> {
 
 /// Create directory for a note.
 pub fn create_dir(category: &str) -> Result<()> {
-    let path = get_base_path()?;
+    let base = get_base_path()?;
     let date = Utc::now().format("%Y-%m-%d");
     match category.is_empty() {
-        true => fs::create_dir_all(format!("{}{}", path, date))?,
-        false => fs::create_dir_all(format!("{}{}", path, category))?,
+        true => {
+            fs::create_dir_all(format!("{}{}", base, date))?;
+            fs::set_permissions(
+                format!("{}{}", base, date),
+                fs::Permissions::from_mode(0o700),
+            )?;
+        }
+        false => {
+            fs::create_dir_all(format!("{}{}", base, category))?;
+            fs::set_permissions(
+                format!("{}{}", base, category),
+                fs::Permissions::from_mode(0o700),
+            )?;
+        }
     }
+    fs::set_permissions(base, fs::Permissions::from_mode(0o700))?;
     Ok(())
 }
 
