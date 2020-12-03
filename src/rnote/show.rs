@@ -8,12 +8,14 @@ use crossterm::{
 use std::io::{stderr, Write};
 use termimad::*;
 
+/// Set view area.
 pub fn view_area() -> Area {
     let mut area = Area::full_screen();
     area.pad_for_max_width(120); // we don't want a too wide text column
     area
 }
 
+/// Display the given markdown string `md` in a Scrollable TextView in a raw terminal.
 pub fn run_app(skin: MadSkin, md: &str) -> Result<()> {
     let mut w = stderr(); // we could also have used stdout
     queue!(w, EnterAlternateScreen)?;
@@ -45,6 +47,7 @@ pub fn run_app(skin: MadSkin, md: &str) -> Result<()> {
     Ok(())
 }
 
+/// Set MadSkin.
 pub fn make_skin() -> MadSkin {
     let mut skin = MadSkin::default();
     skin.table.align = Alignment::Center;

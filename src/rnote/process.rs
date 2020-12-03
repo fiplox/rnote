@@ -3,6 +3,7 @@ use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use dialoguer::{theme::ColorfulTheme, Input};
 
+/// Process argument `new`.
 pub fn new(matches: &ArgMatches) -> Result<()> {
     let header = match matches.value_of("header") {
         Some(s) => s.to_owned(),
@@ -16,6 +17,7 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `remove`.
 pub fn remove(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
         Some(s) => notes::remove(s)?,
@@ -38,6 +40,7 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `remove`.
 pub fn edit(matches: &ArgMatches) -> Result<()> {
     let header = match matches.value_of("header") {
         Some(s) => s.to_owned(),
@@ -50,6 +53,7 @@ pub fn edit(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `list`.
 pub fn list(matches: &ArgMatches) -> Result<()> {
     match matches.is_present("category") {
         true => {
@@ -63,6 +67,7 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `search`.
 pub fn search(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
         Some(s) => {
@@ -88,6 +93,7 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `show`.
 pub fn show(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
         Some(s) => notes::show(s)?,
@@ -107,6 +113,7 @@ pub fn show(matches: &ArgMatches) -> Result<()> {
     Ok(())
 }
 
+/// Process argument `panic`.
 pub fn panic() -> Result<()> {
     let base = notes::get_base_path()?;
     std::fs::remove_dir_all(base)?;
