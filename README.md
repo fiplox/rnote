@@ -31,3 +31,4 @@ Example:
 - [x] List all notes
 - [x] List all notes from a `Category`
 - [x] Delete all notes (`panic`)
+- [x] Delete all notes created at a certain date

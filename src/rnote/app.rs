@@ -25,7 +25,13 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("remove")
                 .alias("r")
                 .about("Remove a note.")
-                .arg(Arg::with_name("header").help("Name of the note.")),
+                .arg(Arg::with_name("header").help("Name of the note."))
+                .arg(
+                    Arg::with_name("date")
+                        .help("Delete all notes created at given date.")
+                        .short("d")
+                        .long("date"),
+                ),
         )
         .subcommand(
             SubCommand::with_name("edit")

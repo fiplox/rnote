@@ -1,8 +1,8 @@
 use crate::rnote::show;
 use anyhow::{anyhow, Result};
-use chrono::Utc;
+use chrono::{DateTime, Utc};
 use dialoguer::{theme::ColorfulTheme, Confirm, Select};
-use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, process::Command};
+use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, path::PathBuf, process::Command};
 use walkdir::WalkDir;
 
 /// Get the path to the root directory of all notes.
@@ -125,6 +125,7 @@ pub fn remove(header: &str) -> Result<()> {
     {
         println!("Deleting...");
         fs::remove_file(path.unwrap())?;
+        remove_empty_dirs()?;
         println!("Successfully deleted.");
         Ok(())
     } else {
@@ -297,5 +298,43 @@ pub fn list_category(category: &str) -> Result<()> {
                 .status()?;
         }
     }
+    Ok(())
+}
+
+pub fn wipe_date(date: &str) -> Result<()> {
+    let base = get_base_path()?;
+    for (_, file) in WalkDir::new(base)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            let time: DateTime<Utc> = file.metadata()?.created()?.into();
+            if time.format("%Y-%m-%d").to_string() == date {
+                fs::remove_file(file.path())?;
+            }
+        }
+    }
+    remove_empty_dirs()?;
+
+    Ok(())
+}
+
+fn remove_empty_dirs() -> Result<()> {
+    let base = get_base_path()?;
+    for (_, file) in WalkDir::new(base)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        let is_empty = PathBuf::from(file.path())
+            .read_dir()
+            .map(|mut i| i.next().is_none())
+            .unwrap_or(false);
+        if is_empty {
+            fs::remove_dir(file.path())?;
+        }
+    }
+
     Ok(())
 }
