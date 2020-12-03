@@ -1,4 +1,4 @@
-use crate::rnote::notes;
+use crate::rnote::{app, notes};
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use dialoguer::{theme::ColorfulTheme, Input};
@@ -17,13 +17,24 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
 }
 
 pub fn remove(matches: &ArgMatches) -> Result<()> {
-    let header = match matches.value_of("header") {
-        Some(s) => s.to_owned(),
-        None => Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("Name of your note")
-            .interact_text()?,
-    };
-    notes::remove(&header)?;
+    match matches.value_of("header") {
+        Some(s) => notes::remove(s)?,
+        None => match matches.is_present("date") {
+            true => {
+                let date: String = Input::with_theme(&ColorfulTheme::default())
+                    .with_prompt("Date")
+                    .interact_text()?;
+                notes::wipe_date(&date)?;
+                return Ok(());
+            }
+            false => {
+                let header: String = Input::with_theme(&ColorfulTheme::default())
+                    .with_prompt("Name of your note")
+                    .interact_text()?;
+                notes::remove(&header)?;
+            }
+        },
+    }
     Ok(())
 }
 
