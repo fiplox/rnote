@@ -1,4 +1,4 @@
-use crate::rnote::{app, notes};
+use crate::rnote::notes;
 use anyhow::{anyhow, Result};
 use clap::ArgMatches;
 use dialoguer::{theme::ColorfulTheme, Input};
