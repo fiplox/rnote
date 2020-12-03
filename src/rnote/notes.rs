@@ -58,7 +58,7 @@ pub fn create(header: &str, category: &str) -> Result<()> {
     Ok(())
 }
 
-/// Checks if potentially new note name already exists.
+/// Check if potentially new note name already exists.
 fn is_duplicate(header: &str, category: &str) -> Result<()> {
     let file = format!("{}{}.md", get_path(category)?, header);
     let path = format!("{}", get_path(category)?);
@@ -77,7 +77,7 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
     Ok(())
 }
 
-/// Finds a path to desired note.
+/// Find a path to desired note.
 pub fn find_path(header: &str) -> Result<Option<String>> {
     let mut paths: Vec<String> = Vec::new();
     let base = get_base_path()?;
@@ -115,7 +115,7 @@ pub fn find_path(header: &str) -> Result<Option<String>> {
     }
 }
 
-/// Deletes a note.
+/// Delete a note.
 pub fn remove(header: &str) -> Result<()> {
     let path = find_path(header)?;
     if Confirm::with_theme(&ColorfulTheme::default())
@@ -150,6 +150,7 @@ pub fn modify(header: &str) -> Result<()> {
     }
 }
 
+/// Search all notes that contain a given string.
 pub fn search_by_word(word: &str) -> Result<()> {
     extern crate fstream;
     let path = get_base_path()?;
@@ -188,6 +189,7 @@ pub fn search_by_word(word: &str) -> Result<()> {
     Ok(())
 }
 
+/// Show all notes.
 pub fn show_all() -> Result<()> {
     let path = get_base_path()?;
     let mut files: Vec<String> = Vec::new();
@@ -206,6 +208,7 @@ pub fn show_all() -> Result<()> {
     Ok(())
 }
 
+/// Show one note.
 pub fn show(header: &str) -> Result<()> {
     let path = find_path(header)?;
     match path {
@@ -219,6 +222,7 @@ pub fn show(header: &str) -> Result<()> {
     }
 }
 
+/// Show all notes in the given category.
 pub fn show_category(category: &str) -> Result<()> {
     let base = get_base_path()?;
     let path = format!("{}{}", base, category);
@@ -240,6 +244,7 @@ pub fn show_category(category: &str) -> Result<()> {
     Ok(())
 }
 
+/// List all notes and optionally open one.
 pub fn list_all() -> Result<()> {
     let path = get_base_path()?;
     let mut files: Vec<String> = Vec::new();
@@ -269,6 +274,7 @@ pub fn list_all() -> Result<()> {
     Ok(())
 }
 
+/// List all notes in the given category and optionally open one.
 pub fn list_category(category: &str) -> Result<()> {
     let base = get_base_path()?;
     let path = format!("{}{}", base, category);
@@ -301,6 +307,7 @@ pub fn list_category(category: &str) -> Result<()> {
     Ok(())
 }
 
+/// Remove all notes created at the given date in format `YYYY-MM-dd`.
 pub fn wipe_date(date: &str) -> Result<()> {
     let base = get_base_path()?;
     for (_, file) in WalkDir::new(base)
@@ -320,6 +327,7 @@ pub fn wipe_date(date: &str) -> Result<()> {
     Ok(())
 }
 
+/// Remove empty directories.
 fn remove_empty_dirs() -> Result<()> {
     let base = get_base_path()?;
     for (_, file) in WalkDir::new(base)

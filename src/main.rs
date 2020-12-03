@@ -4,6 +4,7 @@ use rnote::{app, process};
 
 mod rnote;
 
+/// Check if variable `EDITOR` is set.
 fn check() -> Result<()> {
     let editor = std::env::var("EDITOR").unwrap_or("".to_owned());
     if editor.is_empty() {

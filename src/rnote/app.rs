@@ -1,5 +1,6 @@
 pub use clap::{App, AppSettings, Arg, SubCommand};
 
+/// Initialize all possible arguments.
 pub fn make_app() -> App<'static, 'static> {
     App::new("rnote")
         .version("0.0.1")
