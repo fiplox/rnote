@@ -402,6 +402,7 @@ fn remove_empty_dirs() -> Result<()> {
     Ok(())
 }
 
+// Make sure to remove rnote directory before tests.
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -413,38 +414,44 @@ mod tests {
 
     #[test]
     fn find_by_word_test() {
+        assert!(create("test", "test_word").is_ok());
         assert!(get_files_by_word("test").is_ok());
     }
 
     #[test]
     fn get_note_path_test() {
+        assert!(create("test", "test_path").is_ok());
         assert!(get_note_path("test").is_ok());
     }
 
     #[test]
     fn get_category_path_create_dir_test() {
-        assert!(create_dir("test").is_ok());
+        assert!(create_dir("test_dir").is_ok());
         assert!(get_category_path("test").is_ok());
     }
 
     #[test]
     fn create_remove_test() {
-        assert!(create("test", "test").is_ok());
-        assert!(remove_note("test").is_ok());
+        assert!(create("test1", "test1").is_ok());
+        let data_home = std::env::var("XDG_DATA_HOME").unwrap_or("".to_owned());
+        assert!(remove_note(&format!("{}/rnote/test1/test1.md", data_home)).is_ok());
     }
 
     #[test]
     fn remove_empty_dirs_test() {
+        assert!(create_dir("test_empty").is_ok());
         assert!(remove_empty_dirs().is_ok());
     }
 
     #[test]
+    #[ignore]
     fn wipe_date_test() {
         assert!(wipe_date("1999-10-10").is_ok());
     }
 
     #[test]
     fn get_notes_in_category_test() {
-        assert!(get_notes_in_category("test").is_ok());
+        assert!(create("test", "test_c").is_ok());
+        assert!(get_notes_in_category("test_c").is_ok());
     }
 }
