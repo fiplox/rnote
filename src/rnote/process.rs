@@ -20,7 +20,7 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
 /// Process argument `remove`.
 pub fn remove(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
-        Some(s) => notes::remove(s)?,
+        Some(s) => notes::remove_interractive(s)?,
         None => match matches.is_present("date") {
             true => {
                 let date: String = Input::with_theme(&ColorfulTheme::default())
@@ -33,7 +33,7 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
                 let header: String = Input::with_theme(&ColorfulTheme::default())
                     .with_prompt("Name of your note")
                     .interact_text()?;
-                notes::remove(&header)?;
+                notes::remove_interractive(&header)?;
             }
         },
     }
@@ -62,7 +62,7 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
                 .interact_text()?;
             notes::list_category(&s)?;
         }
-        false => notes::list_all()?,
+        false => notes::list_all_notes()?,
     }
     Ok(())
 }
@@ -71,7 +71,7 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
 pub fn search(matches: &ArgMatches) -> Result<()> {
     match matches.value_of("header") {
         Some(s) => {
-            let p = notes::find_path(s)?;
+            let p = notes::get_note_path_interractive(s)?;
             match p {
                 Some(s) => {
                     let editor = std::env::var("EDITOR")?;

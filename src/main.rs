@@ -1,20 +1,19 @@
-use anyhow::Result;
-use dialoguer::{theme::ColorfulTheme, Input};
+use anyhow::{anyhow, Result};
 use rnote::{app, process};
 
 mod rnote;
 
-/// Check if variable `EDITOR` is set.
+/// Check if variable `EDITOR` and `XDG_DATA_HOME` are set.
 fn check() -> Result<()> {
     let editor = std::env::var("EDITOR").unwrap_or("".to_owned());
-    if editor.is_empty() {
-        let editor: String = Input::with_theme(&ColorfulTheme::default())
-            .with_prompt("Your text editor")
-            .interact_text()?;
-        std::env::set_var("EDITOR", editor);
+    let data_home = std::env::var("XDG_DATA_HOME").unwrap_or("".to_owned());
+    if editor.is_empty() || data_home.is_empty() {
+        Err(anyhow!(
+            "Please make sure variables EDITOR and XDG_DATA_HOME are set."
+        ))
+    } else {
+        Ok(())
     }
-
-    Ok(())
 }
 
 fn main() -> Result<()> {
@@ -33,4 +32,15 @@ fn main() -> Result<()> {
     };
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    #[ignore]
+    fn check_test() {
+        assert!(check().is_ok());
+    }
 }
