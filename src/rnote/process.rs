@@ -106,7 +106,12 @@ pub fn show(matches: &ArgMatches) -> Result<()> {
                         .interact_text()?;
                     notes::show_category(&category)?;
                 }
-                false => return Err(anyhow!("No option is given. Abort.")),
+                false => {
+                    let s: String = Input::with_theme(&ColorfulTheme::default())
+                        .with_prompt("String to search")
+                        .interact_text()?;
+                    notes::show(&s)?;
+                }
             },
         },
     }
