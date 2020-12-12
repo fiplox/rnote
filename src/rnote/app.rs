@@ -45,7 +45,7 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("list")
                 .alias("l")
                 .alias("ls")
-                .about("List all notes or notes from a category")
+                .about("List all notes or notes from a category.")
                 .arg(
                     Arg::with_name("category")
                         .help("List all notes from a category.")
@@ -68,6 +68,7 @@ pub fn make_app() -> App<'static, 'static> {
         )
         .subcommand(
             SubCommand::with_name("show")
+                .about("Show note(s) in TextView.")
                 .arg(
                     Arg::with_name("all")
                         .help("Show all notes.")
@@ -77,12 +78,12 @@ pub fn make_app() -> App<'static, 'static> {
                 )
                 .arg(
                     Arg::with_name("category")
-                        .help("Show all notes from a category/date")
+                        .help("Show all notes from a category/date.")
                         .short("c")
                         .long("category")
                         .conflicts_with("header"),
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
         )
-        .subcommand(SubCommand::with_name("panic").help("Delete all notes."))
+        .subcommand(SubCommand::with_name("panic").about("Delete all notes."))
 }
