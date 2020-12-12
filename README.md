@@ -19,6 +19,50 @@ Example:
     └── to buy.md
 ```
 
+## Basic usage
+`rnote` gives certain subcommands for managing your notes.
+```
+USAGE:
+    rnote [SUBCOMMAND]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    edit      Edit a note.
+    help      Prints this message or the help of the given subcommand(s)
+    list      List all notes or notes from a category.
+    new       Create new note
+    panic     Delete all notes.
+    remove    Remove a note.
+    search    Search a note.
+    show      Show note(s) in TextView.
+```
+You can get help page to each subcommand individually by typing `rnote <subcommand> -h` to see all possible options.
+
+## Usage
+This section explains the thorough use of each procedure.
+
+* [Create a note](#create-a-note) 
+* [Edit a note](#edit-a-note)
+* [List notes](#list-notes)
+* [Remove notes](#remove-notes)
+* [Search notes](#search-notes)
+* [Show notes](#search-notes)
+
+### Create a note
+
+### Edit a note
+
+### List notes
+
+### Remove notes
+
+### Search notes
+
+### Show notes
+
 ## TODO
 
 - [x] Create a note
