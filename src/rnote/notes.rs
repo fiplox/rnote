@@ -183,13 +183,16 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
 /// Find a path to desired note and prompt to choose one to open.
 pub fn get_note_path_interractive(header: &str) -> Result<Option<String>> {
     let mut paths: Vec<String> = get_note_path(header)?;
+    let mut p: Vec<String> = paths.clone();
+    let r = p[0].find("rnote").unwrap_or(0);
+    p = p.into_iter().map(|mut s| s.drain(r..).collect()).collect();
     if paths.len() == 1 {
         Ok(Some(paths.remove(0)))
     } else {
         let selection = Select::with_theme(&ColorfulTheme::default())
             .with_prompt("Optionally choose a note")
             .default(0)
-            .items(&paths)
+            .items(&p)
             .interact_opt()?;
         match selection {
             Some(s) => Ok(Some(paths.remove(s))),
@@ -210,10 +213,12 @@ pub fn remove_note(path: &str) -> Result<()> {
 /// Prompt user to delete a note.
 pub fn remove_interractive(header: &str) -> Result<()> {
     let path = get_note_path_interractive(header)?;
+    if path.is_none() {
+        return Err(anyhow!("Abort."));
+    }
     if Confirm::with_theme(&ColorfulTheme::default())
         .with_prompt(format!("Do you want to delete {}?", header))
         .interact()?
-        && path.is_some()
     {
         remove_note(&path.unwrap())?;
         Ok(())
@@ -242,10 +247,13 @@ pub fn modify(header: &str) -> Result<()> {
 /// Prompt user to open one of found notes by word.
 pub fn search_by_word(word: &str) -> Result<()> {
     let mut paths: Vec<String> = get_files_by_word(word)?;
+    let mut p: Vec<String> = paths.clone();
+    let r = p[0].find("rnote").unwrap_or(0);
+    p = p.into_iter().map(|mut s| s.drain(r..).collect()).collect();
     let selection = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Optionally choose a note")
         .default(0)
-        .items(&paths)
+        .items(&p)
         .interact_opt()?;
     if let Some(selection) = selection {
         let editor = std::env::var("EDITOR")?;
@@ -259,7 +267,7 @@ pub fn search_by_word(word: &str) -> Result<()> {
 
 /// Show all notes.
 pub fn show_all() -> Result<()> {
-    let mut files: Vec<String> = get_all_notes()?;
+    let files: Vec<String> = get_all_notes()?;
     let skin = show::make_skin();
     let md = &files.join("---\n");
     show::run_app(skin, md)?;
@@ -282,7 +290,7 @@ pub fn show(header: &str) -> Result<()> {
 
 /// Show all notes in the given category.
 pub fn show_category(category: &str) -> Result<()> {
-    let mut files: Vec<String> = get_notes_in_category(category)?;
+    let files: Vec<String> = get_notes_in_category(category)?;
     let skin = show::make_skin();
     let md = &files.join("---\n");
     show::run_app(skin, md)?;
@@ -292,10 +300,13 @@ pub fn show_category(category: &str) -> Result<()> {
 /// List all notes and prompt to open one.
 pub fn list_all_notes() -> Result<()> {
     let mut files: Vec<String> = get_all_notes()?;
+    let mut p: Vec<String> = files.clone();
+    let r = p[0].find("rnote").unwrap_or(0);
+    p = p.into_iter().map(|mut s| s.drain(r..).collect()).collect();
     let selection = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Optionally choose a note")
         .default(0)
-        .items(&files)
+        .items(&p)
         .interact_opt()?;
     if let Some(selection) = selection {
         let editor = std::env::var("EDITOR")?;
@@ -309,10 +320,13 @@ pub fn list_all_notes() -> Result<()> {
 /// List all notes in the given category and optionally open one.
 pub fn list_category(category: &str) -> Result<()> {
     let mut files: Vec<String> = get_notes_in_category(category)?;
+    let mut p: Vec<String> = files.clone();
+    let r = p[0].find("rnote").unwrap_or(0);
+    p = p.into_iter().map(|mut s| s.drain(r..).collect()).collect();
     let selection = Select::with_theme(&ColorfulTheme::default())
         .with_prompt("Optionally choose a note")
         .default(0)
-        .items(&files)
+        .items(&p)
         .interact_opt()?;
     if let Some(selection) = selection {
         let editor = std::env::var("EDITOR")?;

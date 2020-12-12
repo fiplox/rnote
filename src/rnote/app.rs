@@ -12,14 +12,14 @@ pub fn make_app() -> App<'static, 'static> {
                 .alias("n")
                 .about("Create new note")
                 .arg(
+                    Arg::with_name("header")
+                        .index(1)
+                        .help("Give name to the note."),
+                )
+                .arg(
                     Arg::with_name("category")
                         .help("Create note in category.")
                         .index(2),
-                )
-                .arg(
-                    Arg::with_name("header")
-                        .index(1)
-                        .help("Give name to the file."),
                 ),
         )
         .subcommand(
