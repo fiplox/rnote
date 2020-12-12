@@ -8,7 +8,7 @@ use walkdir::WalkDir;
 /// Get the path to the root directory of all notes.
 pub fn get_base_path() -> Result<String> {
     let home = env::var("XDG_DATA_HOME")?;
-    Ok(format!("{}/.rnote/", home))
+    Ok(format!("{}/rnote/", home))
 }
 
 /// Get path to a category/date directory.
