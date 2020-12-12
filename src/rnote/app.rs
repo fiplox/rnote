@@ -31,6 +31,7 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("date")
                         .help("Delete all notes created at given date.")
                         .short("d")
+                        .conflicts_with("header")
                         .long("date"),
                 ),
         )
@@ -60,6 +61,7 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("word")
                         .help("Search by word.")
                         .short("w")
+                        .conflicts_with("header")
                         .long("word"),
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
@@ -70,13 +72,15 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("all")
                         .help("Show all notes.")
                         .short("a")
+                        .conflicts_with("header")
                         .long("all"),
                 )
                 .arg(
                     Arg::with_name("category")
                         .help("Show all notes from a category/date")
                         .short("c")
-                        .long("category"),
+                        .long("category")
+                        .conflicts_with("header"),
                 )
                 .arg(Arg::with_name("header").help("Name of the note.")),
         )
