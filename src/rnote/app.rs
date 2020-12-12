@@ -3,7 +3,7 @@ pub use clap::{App, AppSettings, Arg, SubCommand};
 /// Initialize all possible arguments.
 pub fn make_app() -> App<'static, 'static> {
     App::new("rnote")
-        .version("0.0.1")
+        .version("0.1.0")
         .author("Volodymyr Patuta <vpatuta AT protonmail DOT com>")
         .about("Minimal note talking cli tool.")
         .setting(AppSettings::ArgRequiredElseHelp)
