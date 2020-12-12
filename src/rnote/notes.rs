@@ -267,7 +267,17 @@ pub fn search_by_word(word: &str) -> Result<()> {
 
 /// Show all notes.
 pub fn show_all() -> Result<()> {
-    let files: Vec<String> = get_all_notes()?;
+    let base: String = get_base_path()?;
+    let mut files: Vec<String> = Vec::new();
+    for (_, file) in WalkDir::new(base)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            files.push(fs::read_to_string(file.path())?);
+        }
+    }
     let skin = show::make_skin();
     let md = &files.join("---\n");
     show::run_app(skin, md)?;
@@ -290,11 +300,26 @@ pub fn show(header: &str) -> Result<()> {
 
 /// Show all notes in the given category.
 pub fn show_category(category: &str) -> Result<()> {
-    let files: Vec<String> = get_notes_in_category(category)?;
-    let skin = show::make_skin();
-    let md = &files.join("---\n");
-    show::run_app(skin, md)?;
-    Ok(())
+    let base = get_base_path()?;
+    let path = format!("{}{}", base, category);
+    let mut files: Vec<String> = Vec::new();
+    if std::path::Path::new(&path).exists() {
+        for (_, file) in WalkDir::new(path)
+            .into_iter()
+            .filter_map(|file| file.ok())
+            .enumerate()
+        {
+            if file.metadata()?.is_file() {
+                files.push(fs::read_to_string(file.path())?);
+            }
+        }
+        let skin = show::make_skin();
+        let md = &files.join("---\n");
+        show::run_app(skin, md)?;
+        Ok(())
+    } else {
+        Err(anyhow!("Category does not exist."))
+    }
 }
 
 /// List all notes and prompt to open one.
