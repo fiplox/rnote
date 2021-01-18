@@ -278,6 +278,9 @@ pub fn show_all() -> Result<()> {
             files.push(fs::read_to_string(file.path())?);
         }
     }
+    if files.is_empty() {
+        return Err(anyhow!("No notes found."));
+    }
     let skin = show::make_skin();
     let md = &files.join("---\n");
     show::run_app(skin, md)?;
@@ -312,6 +315,9 @@ pub fn show_category(category: &str) -> Result<()> {
             if file.metadata()?.is_file() {
                 files.push(fs::read_to_string(file.path())?);
             }
+        }
+        if files.is_empty() {
+            return Err(anyhow!("No notes found."));
         }
         let skin = show::make_skin();
         let md = &files.join("---\n");
