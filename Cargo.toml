@@ -1,6 +1,6 @@
 [package]
 name = "rnote"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Volodymyr Patuta <6977238-fiplox@users.noreply.gitlab.com>"]
 edition = "2018"
 
