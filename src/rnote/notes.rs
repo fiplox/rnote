@@ -155,8 +155,18 @@ pub fn create(header: &str, category: &str) -> Result<()> {
     create_dir(category)?;
     is_duplicate(header, category)?;
     let mut f = fs::File::create(&file)?;
+    let username = env::var("USER").unwrap_or("".to_owned());
+    let date = Utc::now().format("%d-%m-%Y");
+    let note_header = format!(
+        r#"---
+title: {}
+author: {}
+date: {}
+---"#,
+        header, username, date
+    );
     f.set_permissions(fs::Permissions::from_mode(0o600))?;
-    f.write(format!("# {}\n", header).as_bytes())?;
+    f.write(format!("{}\n", note_header).as_bytes())?;
     Command::new(editor).arg(&file).status()?;
     Ok(())
 }
