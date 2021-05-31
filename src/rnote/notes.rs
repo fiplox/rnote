@@ -97,21 +97,21 @@ pub fn create_dir(category: &str) -> Result<()> {
 }
 
 /// Find a path to desired note.
-pub fn get_note_path(header: &str) -> Result<Vec<String>> {
+pub fn get_note_path(name: &str) -> Result<Vec<String>> {
     let mut paths: Vec<String> = Vec::new();
     let base = get_base_path()?;
-    let header = format!("{}.md", header);
+    let name = format!("{}.md", name);
     for entry in WalkDir::new(base) {
         let entry = entry?;
         let p: String = match entry.path().to_str() {
             Some(s) => s.to_owned(),
             None => "".to_owned(),
         };
-        let name: &str = match entry.file_name().to_str() {
+        let file_name: &str = match entry.file_name().to_str() {
             Some(s) => s,
             None => "",
         };
-        if name == header {
+        if file_name == name {
             paths.push(p);
         }
     }
@@ -149,31 +149,31 @@ pub fn get_files_by_word(word: &str) -> Result<Vec<String>> {
 }
 
 /// Create a new note.
-pub fn create(header: &str, category: &str) -> Result<()> {
+pub fn create(name: &str, category: &str) -> Result<()> {
     let editor = env::var("EDITOR")?;
-    let file = format!("{}{}.md", get_category_path(category)?, header);
+    let file = format!("{}{}.md", get_category_path(category)?, name);
     create_dir(category)?;
-    is_duplicate(header, category)?;
+    is_duplicate(name, category)?;
     let mut f = fs::File::create(&file)?;
     let username = env::var("USER").unwrap_or("".to_owned());
     let date = Utc::now().format("%d-%m-%Y");
-    let note_header = format!(
+    let note_name = format!(
         r#"---
 title: {}
 author: {}
 date: {}
 ---"#,
-        header, username, date
+        name, username, date
     );
     f.set_permissions(fs::Permissions::from_mode(0o600))?;
-    f.write(format!("{}\n", note_header).as_bytes())?;
+    f.write(format!("{}\n", note_name).as_bytes())?;
     Command::new(editor).arg(&file).status()?;
     Ok(())
 }
 
 /// Check if potentially new note name already exists.
-fn is_duplicate(header: &str, category: &str) -> Result<()> {
-    let file = format!("{}{}.md", get_category_path(category)?, header);
+fn is_duplicate(name: &str, category: &str) -> Result<()> {
+    let file = format!("{}{}.md", get_category_path(category)?, name);
     let path = format!("{}", get_category_path(category)?);
     for entry in WalkDir::new(path) {
         let entry = entry?;
@@ -191,8 +191,8 @@ fn is_duplicate(header: &str, category: &str) -> Result<()> {
 }
 
 /// Find a path to desired note and prompt to choose one to open.
-pub fn get_note_path_interractive(header: &str) -> Result<Option<String>> {
-    let mut paths: Vec<String> = get_note_path(header)?;
+pub fn get_note_path_interractive(name: &str) -> Result<Option<String>> {
+    let mut paths: Vec<String> = get_note_path(name)?;
     let mut p: Vec<String> = paths.clone();
     let r = p[0].find("rnote").unwrap_or(0);
     p = p.into_iter().map(|mut s| s.drain(r..).collect()).collect();
@@ -221,13 +221,13 @@ pub fn remove_note(path: &str) -> Result<()> {
 }
 
 /// Prompt user to delete a note.
-pub fn remove_interractive(header: &str) -> Result<()> {
-    let path = get_note_path_interractive(header)?;
+pub fn remove_interractive(name: &str) -> Result<()> {
+    let path = get_note_path_interractive(name)?;
     if path.is_none() {
         return Err(anyhow!("Abort."));
     }
     if Confirm::with_theme(&ColorfulTheme::default())
-        .with_prompt(format!("Do you want to delete {}?", header))
+        .with_prompt(format!("Do you want to delete {}?", name))
         .interact()?
     {
         remove_note(&path.unwrap())?;
@@ -238,9 +238,9 @@ pub fn remove_interractive(header: &str) -> Result<()> {
 }
 
 /// Modify a note.
-pub fn modify(header: &str) -> Result<()> {
+pub fn modify(name: &str) -> Result<()> {
     let editor = env::var("EDITOR")?;
-    let file = get_note_path_interractive(header)?;
+    let file = get_note_path_interractive(name)?;
     match file {
         Some(f) => {
             Command::new(editor).arg(f).status()?;
@@ -298,8 +298,8 @@ pub fn show_all() -> Result<()> {
 }
 
 /// Show one note.
-pub fn show(header: &str) -> Result<()> {
-    let path = get_note_path_interractive(header)?;
+pub fn show(name: &str) -> Result<()> {
+    let path = get_note_path_interractive(name)?;
     match path {
         Some(s) => {
             let skin = show::make_skin();

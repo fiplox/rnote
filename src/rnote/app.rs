@@ -12,7 +12,7 @@ pub fn make_app() -> App<'static, 'static> {
                 .alias("n")
                 .about("Create new note")
                 .arg(
-                    Arg::with_name("header")
+                    Arg::with_name("name")
                         .index(1)
                         .help("Give name to the note."),
                 )
@@ -27,12 +27,12 @@ pub fn make_app() -> App<'static, 'static> {
                 .alias("r")
                 .alias("rm")
                 .about("Remove a note.")
-                .arg(Arg::with_name("header").help("Name of the note."))
+                .arg(Arg::with_name("name").help("Name of the note."))
                 .arg(
                     Arg::with_name("date")
                         .help("Delete all notes created at given date.")
                         .short("d")
-                        .conflicts_with("header")
+                        .conflicts_with("name")
                         .long("date"),
                 ),
         )
@@ -40,7 +40,7 @@ pub fn make_app() -> App<'static, 'static> {
             SubCommand::with_name("edit")
                 .alias("e")
                 .about("Edit a note.")
-                .arg(Arg::with_name("header").help("Name of the note.")),
+                .arg(Arg::with_name("name").help("Name of the note.")),
         )
         .subcommand(
             SubCommand::with_name("list")
@@ -62,10 +62,10 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("word")
                         .help("Search by word.")
                         .short("w")
-                        .conflicts_with("header")
+                        .conflicts_with("name")
                         .long("word"),
                 )
-                .arg(Arg::with_name("header").help("Name of the note.")),
+                .arg(Arg::with_name("name").help("Name of the note.")),
         )
         .subcommand(
             SubCommand::with_name("show")
@@ -74,7 +74,7 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("all")
                         .help("Show all notes.")
                         .short("a")
-                        .conflicts_with("header")
+                        .conflicts_with("name")
                         .long("all"),
                 )
                 .arg(
@@ -82,9 +82,9 @@ pub fn make_app() -> App<'static, 'static> {
                         .help("Show all notes from a category/date.")
                         .short("c")
                         .long("category")
-                        .conflicts_with("header"),
+                        .conflicts_with("name"),
                 )
-                .arg(Arg::with_name("header").help("Name of the note.")),
+                .arg(Arg::with_name("name").help("Name of the note.")),
         )
         .subcommand(SubCommand::with_name("panic").about("Delete all notes."))
 }

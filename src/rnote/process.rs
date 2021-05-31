@@ -5,7 +5,7 @@ use dialoguer::{theme::ColorfulTheme, Input};
 
 /// Process argument `new`.
 pub fn new(matches: &ArgMatches) -> Result<()> {
-    let header = match matches.value_of("header") {
+    let name = match matches.value_of("name") {
         Some(s) => s.to_owned(),
         None => Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Name of your note")
@@ -19,13 +19,13 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
             .interact_text()?,
     };
 
-    notes::create(&header, &category)?;
+    notes::create(&name, &category)?;
     Ok(())
 }
 
 /// Process argument `remove`.
 pub fn remove(matches: &ArgMatches) -> Result<()> {
-    match matches.value_of("header") {
+    match matches.value_of("name") {
         Some(s) => notes::remove_interractive(s)?,
         None => match matches.is_present("date") {
             true => {
@@ -36,10 +36,10 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
                 return Ok(());
             }
             false => {
-                let header: String = Input::with_theme(&ColorfulTheme::default())
+                let name: String = Input::with_theme(&ColorfulTheme::default())
                     .with_prompt("Name of your note")
                     .interact_text()?;
-                notes::remove_interractive(&header)?;
+                notes::remove_interractive(&name)?;
             }
         },
     }
@@ -48,14 +48,14 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `remove`.
 pub fn edit(matches: &ArgMatches) -> Result<()> {
-    let header = match matches.value_of("header") {
+    let name = match matches.value_of("name") {
         Some(s) => s.to_owned(),
         None => Input::with_theme(&ColorfulTheme::default())
             .with_prompt("Name of your note")
             .interact_text()?,
     };
 
-    notes::modify(&header)?;
+    notes::modify(&name)?;
     Ok(())
 }
 
@@ -75,7 +75,7 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `search`.
 pub fn search(matches: &ArgMatches) -> Result<()> {
-    match matches.value_of("header") {
+    match matches.value_of("name") {
         Some(s) => {
             let p = notes::get_note_path_interractive(s)?;
             match p {
@@ -101,7 +101,7 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `show`.
 pub fn show(matches: &ArgMatches) -> Result<()> {
-    match matches.value_of("header") {
+    match matches.value_of("name") {
         Some(s) => notes::show(s)?,
         None => match matches.is_present("all") {
             true => notes::show_all()?,
