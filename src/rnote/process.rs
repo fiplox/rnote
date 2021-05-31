@@ -32,7 +32,7 @@ pub fn remove(matches: &ArgMatches) -> Result<()> {
                 let date: String = Input::with_theme(&ColorfulTheme::default())
                     .with_prompt("Date")
                     .interact_text()?;
-                notes::wipe_date(&date)?;
+                notes::remove_by_date(&date)?;
                 return Ok(());
             }
             false => {

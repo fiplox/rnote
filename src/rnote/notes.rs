@@ -379,7 +379,7 @@ pub fn list_category(category: &str) -> Result<()> {
 }
 
 /// Remove all notes created at the given date in format `YYYY-MM-dd`.
-pub fn wipe_date(date: &str) -> Result<()> {
+pub fn remove_by_date(date: &str) -> Result<()> {
     let base = get_base_path()?;
     for (_, file) in WalkDir::new(base)
         .into_iter()
@@ -461,8 +461,8 @@ mod tests {
 
     #[test]
     #[ignore]
-    fn wipe_date_test() {
-        assert!(wipe_date("1999-10-10").is_ok());
+    fn remove_by_date_test() {
+        assert!(remove_by_date("1999-10-10").is_ok());
     }
 
     #[test]
