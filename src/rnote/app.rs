@@ -32,8 +32,15 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("date")
                         .help("Delete all notes created at given date.")
                         .short("d")
-                        .conflicts_with("name")
+                        .conflicts_with("category")
                         .long("date"),
+                )
+                .arg(
+                    Arg::with_name("category")
+                        .help("Delete all notes from a given category / Delete a category")
+                        .short("c")
+                        .conflicts_with("date")
+                        .long("category"),
                 ),
         )
         .subcommand(

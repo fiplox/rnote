@@ -25,25 +25,31 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `remove`.
 pub fn remove(matches: &ArgMatches) -> Result<()> {
-    match matches.value_of("name") {
-        Some(s) => notes::remove_interractive(s)?,
-        None => match matches.is_present("date") {
-            true => {
-                let date: String = Input::with_theme(&ColorfulTheme::default())
-                    .with_prompt("Date")
-                    .interact_text()?;
-                notes::remove_by_date(&date)?;
-                return Ok(());
-            }
-            false => {
-                let name: String = Input::with_theme(&ColorfulTheme::default())
-                    .with_prompt("Name of your note")
-                    .interact_text()?;
-                notes::remove_interractive(&name)?;
-            }
-        },
+    if matches.is_present("date") {
+        let date: String = match matches.value_of("name") {
+            Some(s) => s.to_string(),
+            None => Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("Date")
+                .interact_text()?,
+        };
+        return notes::remove_by_date(&date);
     }
-    Ok(())
+    if matches.is_present("category") {
+        let category: String = match matches.value_of("name") {
+            Some(s) => s.to_string(),
+            None => Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("Category")
+                .interact_text()?,
+        };
+        return notes::remove_category(&category);
+    }
+    let name: String = match matches.value_of("name") {
+        Some(s) => s.to_string(),
+        None => Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Name")
+            .interact_text()?,
+    };
+    return notes::remove_note(&name);
 }
 
 /// Process argument `remove`.

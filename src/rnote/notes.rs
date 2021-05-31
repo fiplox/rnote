@@ -1,7 +1,7 @@
 use crate::rnote::show;
 use anyhow::{anyhow, Result};
 use chrono::{DateTime, Utc};
-use dialoguer::{theme::ColorfulTheme, Confirm, Select};
+use dialoguer::{theme::ColorfulTheme, Select};
 use std::{env, fs, io::Write, os::unix::fs::PermissionsExt, path::PathBuf, process::Command};
 use walkdir::WalkDir;
 
@@ -212,29 +212,40 @@ pub fn get_note_path_interractive(name: &str) -> Result<Option<String>> {
 }
 
 /// Delete a note.
-pub fn remove_note(path: &str) -> Result<()> {
-    println!("Deleting...");
-    fs::remove_file(path)?;
-    remove_empty_dirs()?;
-    println!("Successfully deleted.");
-    Ok(())
-}
-
-/// Prompt user to delete a note.
-pub fn remove_interractive(name: &str) -> Result<()> {
-    let path = get_note_path_interractive(name)?;
-    if path.is_none() {
-        return Err(anyhow!("Abort."));
-    }
-    if Confirm::with_theme(&ColorfulTheme::default())
-        .with_prompt(format!("Do you want to delete {}?", name))
-        .interact()?
-    {
-        remove_note(&path.unwrap())?;
+pub fn remove_note(name: &str) -> Result<()> {
+    let mut paths = get_note_path(name)?;
+    if paths.len() == 1 {
+        println!("Deleting...");
+        fs::remove_file(paths.remove(0))?;
+        remove_empty_dirs()?;
+        println!("Successfully deleted.");
         Ok(())
     } else {
-        Err(anyhow!("Abort."))
+        let selection = Select::with_theme(&ColorfulTheme::default())
+            .with_prompt("Choose a note to delete")
+            .items(&paths)
+            .interact_opt()?;
+        match selection {
+            Some(s) => {
+                fs::remove_file(paths.remove(s))?;
+                remove_empty_dirs()?;
+                println!("Successfully deleted.");
+                Ok(())
+            }
+            None => {
+                println!("Canceling...");
+                Ok(())
+            }
+        }
     }
+}
+
+pub fn remove_category(category: &str) -> Result<()> {
+    let path = get_category_path(category)?;
+    println!("Deleting...");
+    fs::remove_dir_all(path)?;
+    println!("Successfully deleted.");
+    Ok(())
 }
 
 /// Modify a note.
@@ -389,6 +400,7 @@ pub fn remove_by_date(date: &str) -> Result<()> {
         if file.metadata()?.is_file() {
             let time: DateTime<Utc> = file.metadata()?.created()?.into();
             if time.format("%Y-%m-%d").to_string() == date {
+                // TODO: add verbose flag and prompt to delete each file.
                 fs::remove_file(file.path())?;
             }
         }
