@@ -69,10 +69,13 @@ pub fn edit(matches: &ArgMatches) -> Result<()> {
 pub fn list(matches: &ArgMatches) -> Result<()> {
     match matches.is_present("category") {
         true => {
-            let s: String = Input::with_theme(&ColorfulTheme::default())
-                .with_prompt("Category:")
-                .interact_text()?;
-            notes::list_category(&s)?;
+            let name: String = match matches.value_of("name") {
+                Some(s) => s.to_string(),
+                None => Input::with_theme(&ColorfulTheme::default())
+                    .with_prompt("Category:")
+                    .interact_text()?,
+            };
+            notes::list_category(&name)?;
         }
         false => notes::list_all_notes()?,
     }

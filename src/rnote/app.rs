@@ -54,6 +54,7 @@ pub fn make_app() -> App<'static, 'static> {
                 .alias("l")
                 .alias("ls")
                 .about("List all notes or notes from a category.")
+                .arg(Arg::with_name("name").help("Name of the category."))
                 .arg(
                     Arg::with_name("category")
                         .help("List all notes from a category.")
