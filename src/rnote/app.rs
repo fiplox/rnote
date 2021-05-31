@@ -5,7 +5,7 @@ pub fn make_app() -> App<'static, 'static> {
     App::new("rnote")
         .version("0.1.1")
         .author("Volodymyr Patuta")
-        .about("Minimal note talking cli tool.")
+        .about("Minimal note taking cli tool.")
         .setting(AppSettings::ArgRequiredElseHelp)
         .subcommand(
             SubCommand::with_name("new")
