@@ -112,27 +112,28 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `show`.
 pub fn show(matches: &ArgMatches) -> Result<()> {
-    match matches.value_of("name") {
-        Some(s) => notes::show(s)?,
-        None => match matches.is_present("all") {
-            true => notes::show_all()?,
-            false => match matches.is_present("category") {
-                true => {
-                    let category: String = Input::with_theme(&ColorfulTheme::default())
-                        .with_prompt("Name of category:")
-                        .interact_text()?;
-                    notes::show_category(&category)?;
-                }
-                false => {
-                    let s: String = Input::with_theme(&ColorfulTheme::default())
-                        .with_prompt("String to search")
-                        .interact_text()?;
-                    notes::show(&s)?;
-                }
-            },
-        },
+    if matches.is_present("all") {
+        return notes::show_all();
     }
-    Ok(())
+    if matches.is_present("category") {
+        let category: String = match matches.value_of("name") {
+            Some(s) => s.to_string(),
+            None => Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("Category:")
+                .interact_text()?,
+        };
+        return notes::show_category(&category);
+    }
+
+    match matches.value_of("name") {
+        Some(s) => return notes::show(s),
+        None => {
+            let s: String = Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("String to search")
+                .interact_text()?;
+            return notes::show(&s);
+        }
+    }
 }
 
 /// Process argument `panic`.
