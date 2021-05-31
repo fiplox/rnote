@@ -9,7 +9,8 @@ fn check() -> Result<()> {
     let data_home = std::env::var("XDG_DATA_HOME").unwrap_or("".to_owned());
     if editor.is_empty() || data_home.is_empty() {
         Err(anyhow!(
-            "Please make sure variables EDITOR and XDG_DATA_HOME are set.\n\n\texport XDG_DATA_HOME=\"$HOME/.local/share\""
+            "Please make sure variables EDITOR and XDG_DATA_HOME are set.\n\nExample:\n\texport\
+            XDG_DATA_HOME=$HOME/.local/share\n\texport EDITOR=/usr/bin/vim"
         ))
     } else {
         Ok(())
