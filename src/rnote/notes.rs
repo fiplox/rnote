@@ -453,12 +453,14 @@ mod tests {
 
     #[test]
     fn find_by_word_test() {
-        assert!(create("test", "test_word").is_ok());
-        assert!(get_files_by_word("test").is_ok());
+        env::set_var("EDITOR", "echo");
+        assert!(create("test_find_by_word", "test_word").is_ok());
+        assert!(get_files_by_word("test_find").is_ok());
     }
 
     #[test]
     fn get_note_path_test() {
+        env::set_var("EDITOR", "echo");
         assert!(create("test", "test_path").is_ok());
         assert!(get_note_path("test").is_ok());
     }
@@ -471,9 +473,9 @@ mod tests {
 
     #[test]
     fn create_remove_test() {
+        env::set_var("EDITOR", "echo");
         assert!(create("test1", "test1").is_ok());
-        let data_home = std::env::var("XDG_DATA_HOME").unwrap_or("".to_owned());
-        assert!(remove_note(&format!("{}/rnote/test1/test1.md", data_home)).is_ok());
+        assert!(remove_note("test1").is_ok());
     }
 
     #[test]
@@ -490,7 +492,8 @@ mod tests {
 
     #[test]
     fn get_notes_in_category_test() {
-        assert!(create("test", "test_c").is_ok());
+        env::set_var("EDITOR", "echo");
+        assert!(create("test_category", "test_c").is_ok());
         assert!(get_notes_in_category("test_c").is_ok());
     }
 }
