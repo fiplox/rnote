@@ -241,10 +241,58 @@ pub fn remove_note(name: &str) -> Result<()> {
 }
 
 pub fn remove_category(category: &str) -> Result<()> {
-    let path = get_category_path(category)?;
+    let base = get_base_path()?;
+    let path = format!("{}{}", base, category);
+    fs::metadata(&path)?; // check if dir exists, else give error msg.
     println!("Deleting...");
     fs::remove_dir_all(path)?;
     println!("Successfully deleted.");
+    Ok(())
+}
+
+/// Remove all notes created at the given date in format `YYYY-MM-dd`.
+pub fn remove_by_date(date: &str) -> Result<()> {
+    let base = get_base_path()?;
+    let mut ok: bool = false;
+    for (_, file) in WalkDir::new(base)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        if file.metadata()?.is_file() {
+            let time: DateTime<Utc> = file.metadata()?.created()?.into();
+            if time.format("%Y-%m-%d").to_string() == date {
+                ok = true;
+                // TODO: add verbose flag and prompt to delete each file.
+                fs::remove_file(file.path())?;
+            }
+        }
+    }
+    if !ok {
+        return Err(anyhow!("No files with this date found."));
+    }
+    remove_empty_dirs()?;
+
+    Ok(())
+}
+
+/// Remove empty directories.
+fn remove_empty_dirs() -> Result<()> {
+    let base = get_base_path()?;
+    for (_, file) in WalkDir::new(base)
+        .into_iter()
+        .filter_map(|file| file.ok())
+        .enumerate()
+    {
+        let is_empty = PathBuf::from(file.path())
+            .read_dir()
+            .map(|mut i| i.next().is_none())
+            .unwrap_or(false);
+        if is_empty {
+            fs::remove_dir(file.path())?;
+        }
+    }
+
     Ok(())
 }
 
@@ -386,47 +434,6 @@ pub fn list_category(category: &str) -> Result<()> {
             .arg(files.remove(selection))
             .status()?;
     }
-    Ok(())
-}
-
-/// Remove all notes created at the given date in format `YYYY-MM-dd`.
-pub fn remove_by_date(date: &str) -> Result<()> {
-    let base = get_base_path()?;
-    for (_, file) in WalkDir::new(base)
-        .into_iter()
-        .filter_map(|file| file.ok())
-        .enumerate()
-    {
-        if file.metadata()?.is_file() {
-            let time: DateTime<Utc> = file.metadata()?.created()?.into();
-            if time.format("%Y-%m-%d").to_string() == date {
-                // TODO: add verbose flag and prompt to delete each file.
-                fs::remove_file(file.path())?;
-            }
-        }
-    }
-    remove_empty_dirs()?;
-
-    Ok(())
-}
-
-/// Remove empty directories.
-fn remove_empty_dirs() -> Result<()> {
-    let base = get_base_path()?;
-    for (_, file) in WalkDir::new(base)
-        .into_iter()
-        .filter_map(|file| file.ok())
-        .enumerate()
-    {
-        let is_empty = PathBuf::from(file.path())
-            .read_dir()
-            .map(|mut i| i.next().is_none())
-            .unwrap_or(false);
-        if is_empty {
-            fs::remove_dir(file.path())?;
-        }
-    }
-
     Ok(())
 }
 
