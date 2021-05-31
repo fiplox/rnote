@@ -25,6 +25,7 @@ pub fn make_app() -> App<'static, 'static> {
         .subcommand(
             SubCommand::with_name("remove")
                 .alias("r")
+                .alias("rm")
                 .about("Remove a note.")
                 .arg(Arg::with_name("header").help("Name of the note."))
                 .arg(

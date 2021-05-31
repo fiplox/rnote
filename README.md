@@ -100,7 +100,7 @@ $ rnote list --category
 It will prompt you to enter category name.
 
 ### Remove notes
-`rnote remove` can be simplified by `rnote r`.\
+`rnote remove` can be simplified by `rnote r` or `rnote rm`.\
 To delete a note, you can simply type:
 ```
 $ rnote remove
