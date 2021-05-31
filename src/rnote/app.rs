@@ -70,7 +70,6 @@ pub fn make_app() -> App<'static, 'static> {
                     Arg::with_name("word")
                         .help("Search by word.")
                         .short("w")
-                        .conflicts_with("name")
                         .long("word"),
                 )
                 .arg(Arg::with_name("name").help("Name of the note.")),

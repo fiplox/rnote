@@ -84,6 +84,16 @@ pub fn list(matches: &ArgMatches) -> Result<()> {
 
 /// Process argument `search`.
 pub fn search(matches: &ArgMatches) -> Result<()> {
+    if matches.is_present("word") {
+        let word: String = match matches.value_of("name") {
+            Some(s) => s.to_string(),
+            None => Input::with_theme(&ColorfulTheme::default())
+                .with_prompt("String to search")
+                .interact_text()?,
+        };
+        return notes::search_by_word(&word);
+    }
+
     match matches.value_of("name") {
         Some(s) => {
             let p = notes::get_note_path_interractive(s)?;
@@ -92,18 +102,10 @@ pub fn search(matches: &ArgMatches) -> Result<()> {
                     let editor = std::env::var("EDITOR")?;
                     std::process::Command::new(editor).arg(s).status()?;
                 }
-                None => (),
+                None => return Err(anyhow!("Nothing found.")),
             }
         }
-        None => match matches.is_present("word") {
-            true => {
-                let s: String = Input::with_theme(&ColorfulTheme::default())
-                    .with_prompt("String to search")
-                    .interact_text()?;
-                notes::search_by_word(&s)?;
-            }
-            false => return Err(anyhow!("Nothing entered for search.")),
-        },
+        None => return Err(anyhow!("Nothing entered for search.")),
     }
     Ok(())
 }

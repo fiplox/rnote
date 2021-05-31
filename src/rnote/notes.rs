@@ -145,7 +145,11 @@ pub fn get_files_by_word(word: &str) -> Result<Vec<String>> {
             }
         }
     }
-    Ok(paths)
+    if paths.len() > 0 {
+        Ok(paths)
+    } else {
+        Err(anyhow!("No files found with word \"{}\"", word))
+    }
 }
 
 /// Create a new note.
