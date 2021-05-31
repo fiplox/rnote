@@ -11,9 +11,15 @@ pub fn new(matches: &ArgMatches) -> Result<()> {
             .with_prompt("Name of your note")
             .interact_text()?,
     };
-    let category = matches.value_of("category").unwrap_or("");
+    let category = match matches.value_of("category") {
+        Some(s) => s.to_owned(),
+        None => Input::with_theme(&ColorfulTheme::default())
+            .with_prompt("Category for your note")
+            .default("".to_string())
+            .interact_text()?,
+    };
 
-    notes::create(&header, category)?;
+    notes::create(&header, &category)?;
     Ok(())
 }
 
